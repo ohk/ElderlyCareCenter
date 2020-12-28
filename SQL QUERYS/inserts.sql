@@ -302,31 +302,6 @@ insert into visitor (first_name, last_name) values ('Gregorio', 'Staterfield');
 insert into visitor (first_name, last_name) values ('Augustine', 'Upham');
 insert into visitor (first_name, last_name) values ('Ralina', 'Balston');
 
-
--- EMPLOYEE FEMALE INSERT
-insert into employee (first_name, last_name, gender) values ('Simonne', 'St. Quintin', 'Female');
-insert into employee (first_name, last_name, gender) values ('Melita', 'Tubble', 'Female');
-insert into employee (first_name, last_name, gender) values ('Estel', 'Jahnel', 'Female');
-insert into employee (first_name, last_name, gender) values ('Berenice', 'Reitenbach', 'Female');
-insert into employee (first_name, last_name, gender) values ('Brigid', 'Markie', 'Female');
-insert into employee (first_name, last_name, gender) values ('Leelah', 'Delahunt', 'Female');
-insert into employee (first_name, last_name, gender) values ('Izabel', 'Yashaev', 'Female');
-insert into employee (first_name, last_name, gender) values ('Blinny', 'Cherryman', 'Female');
-insert into employee (first_name, last_name, gender) values ('Crissie', 'Dillinton', 'Female');
-insert into employee (first_name, last_name, gender) values ('Annmarie', 'Glossop', 'Female');
-
--- EMPLOYEE MALE INSERT
-insert into employee (first_name, last_name, gender) values ('Tanny', 'Feldberg', 'Male');
-insert into employee (first_name, last_name, gender) values ('Obie', 'Saile', 'Male');
-insert into employee (first_name, last_name, gender) values ('King', 'Peers', 'Male');
-insert into employee (first_name, last_name, gender) values ('Timoteo', 'Pittle', 'Male');
-insert into employee (first_name, last_name, gender) values ('Rik', 'Willets', 'Male');
-insert into employee (first_name, last_name, gender) values ('Richardo', 'Camel', 'Male');
-insert into employee (first_name, last_name, gender) values ('Samuele', 'Herity', 'Male');
-insert into employee (first_name, last_name, gender) values ('Francklin', 'Sterrie', 'Male');
-insert into employee (first_name, last_name, gender) values ('Orion', 'Hewes', 'Male');
-insert into employee (first_name, last_name, gender) values ('Isiahi', 'Kilbourne', 'Male');
-
 -- VISITS
 
 insert into visit (first_visitor_id, second_visitor_id, elder_id) values (119, 71, 25);

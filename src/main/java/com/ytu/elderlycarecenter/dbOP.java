@@ -101,24 +101,6 @@ public class dbOP {
         return visitors;
     }
 
-    public ArrayList<Employee> get_employees() throws SQLException {
-        ArrayList<Employee> employees = new ArrayList<>();
-        String query = "SELECT * FROM employee ORDER BY id";
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        while (rs.next()) {
-            int id= rs.getInt("id");
-            String first_name = rs.getString("first_name");
-            String last_name = rs.getString("last_name");
-            Date date_of_start = rs.getDate("date_of_start");
-            int salary = rs.getInt("salary");
-            String gender = rs.getString("gender");
-            Employee tmp = new Employee(id,first_name,last_name,date_of_start,salary,gender);
-            employees.add(tmp);
-        }
-        return employees;
-    }
-
     public ArrayList<Visit> get_visits() throws SQLException {
         ArrayList<Visit> visits = new ArrayList<>();
         String query = "SELECT * FROM visit_view ORDER BY visit_id";

@@ -99,17 +99,17 @@ public class GUI extends javax.swing.JFrame {
         model1.setRowCount(0);
         Object rowData1[] = new Object[4];
         
-        ArrayList<Elder> elders = db.get_elders();
+        ArrayList<Visitor> visitors = db.get_visitors();
 
-        for (int i = 0; i < elders.size(); i++) {
-            rowData[0] = elders.get(i).getId();
-            rowData[1] = elders.get(i).getFirst_name();
-            rowData[2] = elders.get(i).getLast_name();
-            rowData[3] = elders.get(i).getVisit_count();
-            rowData1[0] = elders.get(i).getId();
-            rowData1[1] = elders.get(i).getFirst_name();
-            rowData1[2] = elders.get(i).getLast_name();
-            rowData1[3] = elders.get(i).getVisit_count();
+        for (int i = 0; i < visitors.size(); i++) {
+            rowData[0] = visitors.get(i).getId();
+            rowData[1] = visitors.get(i).getFirst_name();
+            rowData[2] = visitors.get(i).getLast_name();
+            rowData[3] = visitors.get(i).getVisit_count();
+            rowData1[0] = visitors.get(i).getId();
+            rowData1[1] = visitors.get(i).getFirst_name();
+            rowData1[2] = visitors.get(i).getLast_name();
+            rowData1[3] = visitors.get(i).getVisit_count();
             model.addRow(rowData);
             model1.addRow(rowData1);
         }
@@ -790,6 +790,7 @@ public class GUI extends javax.swing.JFrame {
         System.out.println(model.getValueAt(index,0).toString());
         try {
             db.delete_room(id);
+            JOptionPane.showMessageDialog(null, "Room Deleted.");
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -991,21 +992,21 @@ public class GUI extends javax.swing.JFrame {
         int index = table_visitElders.getSelectedRow();
         TableModel model = table_visitElders.getModel();
         selected_elder_label.setText(model.getValueAt(index, 1).toString() + " " +model.getValueAt(index, 2).toString() );
-        selectedElderID = index;
+        selectedElderID = Integer.parseInt(model.getValueAt(index, 0).toString());
     }//GEN-LAST:event_table_visitEldersMouseClicked
 
     private void table_visitVisitor1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_visitVisitor1MouseClicked
         int index = table_visitVisitor1.getSelectedRow();
         TableModel model = table_visitVisitor1.getModel();
         selected_visitor_label1.setText(model.getValueAt(index, 1).toString() + " " +model.getValueAt(index, 2).toString() );
-        selectedVisitor1ID = index;
+        selectedVisitor1ID = Integer.parseInt(model.getValueAt(index, 0).toString());
     }//GEN-LAST:event_table_visitVisitor1MouseClicked
 
     private void table_visitVisitor2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_visitVisitor2MouseClicked
         int index = table_visitVisitor2.getSelectedRow();
         TableModel model = table_visitVisitor2.getModel();
         selected_visitor_label2.setText(model.getValueAt(index, 1).toString() + " " +model.getValueAt(index, 2).toString() );
-        selectedVisitor2ID = index;
+        selectedVisitor2ID = Integer.parseInt(model.getValueAt(index, 0).toString());
     }//GEN-LAST:event_table_visitVisitor2MouseClicked
 
     private void btn_newVisitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_newVisitActionPerformed

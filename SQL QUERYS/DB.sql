@@ -7,15 +7,6 @@ create table visitor(
     visit_count INT DEFAULT 0
 );
 
-create table employee(
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    date_of_start DATE NOT NULL DEFAULT NOW(),
-    salary INT NOT NULL DEFAULT 3000,
-    gender VARCHAR(6) CHECK(gender in ('Female', 'Male'))
-);
-
 create table room(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     room_number INT NOT NULL,
