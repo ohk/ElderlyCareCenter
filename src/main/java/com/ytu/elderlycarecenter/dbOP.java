@@ -52,7 +52,7 @@ public class dbOP {
 
     public ArrayList<Room> get_rooms() throws SQLException {
         ArrayList<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM room";
+        String query = "SELECT * FROM room ORDER BY id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -66,7 +66,7 @@ public class dbOP {
 
     public ArrayList<Elder> get_elders() throws SQLException {
         ArrayList<Elder> elders = new ArrayList<>();
-        String query = "SELECT * FROM elder_view";
+        String query = "SELECT * FROM elder_view ORDER BY id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -87,7 +87,7 @@ public class dbOP {
 
     public ArrayList<Visitor> get_visitors() throws SQLException {
         ArrayList<Visitor> visitors = new ArrayList<>();
-        String query = "SELECT * FROM visitor";
+        String query = "SELECT * FROM visitor ORDER BY id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -103,7 +103,7 @@ public class dbOP {
 
     public ArrayList<Employee> get_employees() throws SQLException {
         ArrayList<Employee> employees = new ArrayList<>();
-        String query = "SELECT * FROM employee";
+        String query = "SELECT * FROM employee ORDER BY id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -121,7 +121,7 @@ public class dbOP {
 
     public ArrayList<Visit> get_visits() throws SQLException {
         ArrayList<Visit> visits = new ArrayList<>();
-        String query = "SELECT * FROM visit_view";
+        String query = "SELECT * FROM visit_view ORDER BY visit_id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -145,7 +145,7 @@ public class dbOP {
 
     public ArrayList<Visit> search_visits(String name) throws SQLException {
         ArrayList<Visit> visits = new ArrayList<>();
-        String query = "SELECT * FROM visit_view WHERE elder_first_name LIKE '%"+name+"%' OR visitor1_first_name LIKE '%"+name+"%' OR visitor2_first_name LIKE '%"+name+"%'";
+        String query = "SELECT * FROM visit_view WHERE elder_first_name LIKE '%"+name+"%' OR elder_last_name LIKE '%"+name+"%' OR visitor1_first_name LIKE '%"+name+"%' OR visitor1_last_name LIKE '%"+name+"%' OR visitor2_first_name LIKE '%"+name+"%' OR visitor2_last_name LIKE '%"+name+"%' ORDER BY visit_id";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -186,17 +186,43 @@ public class dbOP {
         return delete.executeUpdate();
     }
 
-    public int update_visitor(int id,String first_name, String last_name) throws SQLException {
-        PreparedStatement insert = connection.prepareStatement("INSERT INTO room(room_number) VALUES(nextval('room_number'))");
+    public int insert_visitor(String first_name, String last_name) throws SQLException {
+        PreparedStatement insert = connection.prepareStatement("INSERT INTO visitor(first_name, last_name) VALUES (?, ?)");
+        insert.setString(1, first_name);
+        insert.setString(2, last_name);
         return insert.executeUpdate();
+    }
+    
+    public int update_visitor(int id,String first_name, String last_name) throws SQLException {
+        PreparedStatement insert = connection.prepareStatement("UPDATE visitor SET first_name=?, last_name=? WHERE id=?");
+        insert.setString(1, first_name);
+        insert.setString(2, last_name);
+        insert.setInt(3,id);
+        return insert.executeUpdate();
+    }
+    
+     public int delete_visitor(int id) throws SQLException {
+        PreparedStatement delete = connection.prepareStatement("DELETE FROM visitor WHERE id=?");
+        delete.setInt(1, id);
+        return delete.executeUpdate();
     }
     
     public int insert_elder(String first_name,String last_name,Date date_of_birthday,String gender) throws SQLException{
         PreparedStatement insert = connection.prepareStatement("INSERT INTO elder(first_name, last_name, date_of_birth, gender) VALUES (?, ?, ?, ?)");
         insert.setString(1, first_name);
-        insert.setString(2,last_name);
+        insert.setString(2, last_name);
         insert.setDate(3,date_of_birthday);
         insert.setString(4,gender);
+        return insert.executeUpdate();
+    }
+    
+    public int update_elder(int id,String first_name,String last_name,Date date_of_birthday,String gender) throws SQLException{
+        PreparedStatement insert = connection.prepareStatement("UPDATE elder SET first_name=?, last_name=?, date_of_birth=?, gender=? WHERE id=?");
+        insert.setString(1, first_name);
+        insert.setString(2, last_name);
+        insert.setDate(3,date_of_birthday);
+        insert.setString(4,gender);
+        insert.setInt(5,id);
         return insert.executeUpdate();
     }
     
