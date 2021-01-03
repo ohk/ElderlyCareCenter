@@ -1,5 +1,9 @@
 CREATE SEQUENCE room_number START 101;
 
+CREATE TYPE elder_record AS (id int,first_name VARCHAR(50),last_name VARCHAR(50),date_of_birth DATE,gender VARCHAR(50),number_of_room int,room_number int,visit_count int);
+CREATE TYPE empty_record AS (id int, room_number int);
+CREATE TYPE visitor_record AS (id int, first_name VARCHAR(50), last_name VARCHAR(50), visit_count INT);
+
 create table visitor(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -62,6 +66,42 @@ $delete_elder$ LANGUAGE plpgsql;
 
 CREATE TRIGGER delete_elder AFTER DELETE ON elder
     FOR EACH ROW EXECUTE PROCEDURE delete_elder();
+
+CREATE OR REPLACE FUNCTION get_elders_by_age(elder_age integer, OUT elder_rec elder_record) RETURNS SETOF elder_record AS $$
+DECLARE
+  elder_cursor CURSOR for SELECT elder.id,first_name,last_name,date_of_birth,gender,number_of_room,room_number,visit_count
+FROM elder,room
+WHERE elder.number_of_room = room.id AND date_part('year', age(now(), elder.date_of_birth)) >= elder_age ORDER BY id;
+BEGIN
+  FOR elder IN elder_cursor LOOP
+    elder_rec:=elder;
+    RETURN NEXT;
+  END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+-- 0 bütün kayıtlar için, 1 sadece boş odalar için
+CREATE OR REPLACE FUNCTION get_rooms(value integer, OUT empty_rec empty_record) RETURNS SETOF empty_record AS $$
+DECLARE
+  empty_cursor CURSOR for select * from room where isEmpty >= value ORDER BY id;
+BEGIN
+  FOR room IN empty_cursor LOOP
+    empty_rec:=room;
+    RETURN NEXT;
+  END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION get_visitors(value integer, OUT visitor_rec visitor_record) RETURNS SETOF visitor_record AS $$
+DECLARE
+  visitor_cursor CURSOR for SELECT * FROM visitor where visit_count >= value ORDER BY id;
+BEGIN
+  FOR visitor IN visitor_cursor LOOP
+    visitor_rec:=visitor;
+    RETURN NEXT;
+  END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
 
 CREATE VIEW visit_view AS
 SELECT v.id as visit_id, v.visit_time as visit_time,

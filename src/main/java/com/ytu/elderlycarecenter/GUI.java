@@ -5,6 +5,7 @@
  */
 package com.ytu.elderlycarecenter;
 
+import static java.lang.String.valueOf;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -26,6 +27,9 @@ public class GUI extends javax.swing.JFrame {
     int selectedElderID = -1;
     int selectedVisitor1ID = -1;
     int selectedVisitor2ID = -1;
+    int empty = 0;
+    int visit_count = 0;
+    int elder_age = 50;
     /**
      * Creates new form GUI
      * @throws java.sql.SQLException
@@ -34,20 +38,20 @@ public class GUI extends javax.swing.JFrame {
         this.db = new dbOP();
         initComponents();
         
-        visitorsToTable();
-        roomsToTable();
-        eldersToTable();
+        visitorsToTable(visit_count);
+        roomsToTable(0);
+        eldersToTable(elder_age);
         visitsToTable();
-        eldersToTable2();
+        eldersToTable2(0);
         visitorsToTable2();
         filterToTable(0);
     }
     
-    public void roomsToTable() throws SQLException{
+    public void roomsToTable(int empty) throws SQLException{
         DefaultTableModel model = (DefaultTableModel) table_rooms.getModel();
         model.setRowCount(0);
         Object rowData[] = new Object[3];
-        ArrayList<Room> rooms = db.get_rooms();
+        ArrayList<Room> rooms = db.get_rooms(empty);
 
         for (int i = 0; i < rooms.size(); i++) {
             rowData[0] = rooms.get(i).getId();
@@ -70,11 +74,11 @@ public class GUI extends javax.swing.JFrame {
         }
     }
     
-    public void eldersToTable() throws SQLException{
+    public void eldersToTable(int value) throws SQLException{
         DefaultTableModel model = (DefaultTableModel) table_elders.getModel();
         model.setRowCount(0);
         Object rowData[] = new Object[7];
-        ArrayList<Elder> elders = db.get_elders();
+        ArrayList<Elder> elders = db.get_elders(value);
 
         for (int i = 0; i < elders.size(); i++) {
             rowData[0] = elders.get(i).getId();
@@ -89,11 +93,11 @@ public class GUI extends javax.swing.JFrame {
         }
     }
     
-     public void eldersToTable2() throws SQLException{
+     public void eldersToTable2(int value) throws SQLException{
         DefaultTableModel model = (DefaultTableModel) table_visitElders.getModel();
         model.setRowCount(0);
         Object rowData[] = new Object[4];
-        ArrayList<Elder> elders = db.get_elders();
+        ArrayList<Elder> elders = db.get_elders(value);
 
         for (int i = 0; i < elders.size(); i++) {
             rowData[0] = elders.get(i).getId();
@@ -114,7 +118,7 @@ public class GUI extends javax.swing.JFrame {
         model1.setRowCount(0);
         Object rowData1[] = new Object[4];
         
-        ArrayList<Visitor> visitors = db.get_visitors();
+        ArrayList<Visitor> visitors = db.get_visitors(0);
 
         for (int i = 0; i < visitors.size(); i++) {
             rowData[0] = visitors.get(i).getId();
@@ -154,11 +158,11 @@ public class GUI extends javax.swing.JFrame {
         }
     }
     
-    public void visitorsToTable() throws SQLException{
+    public void visitorsToTable(int value) throws SQLException{
         DefaultTableModel model = (DefaultTableModel) table_visitors.getModel();
         model.setRowCount(0);
         Object rowData[] = new Object[4];
-        ArrayList<Visitor> visitors = db.get_visitors();
+        ArrayList<Visitor> visitors = db.get_visitors(value);
         int count = 0;
         for (int i = 0; i < visitors.size(); i++) {
             rowData[0] = visitors.get(i).getId();
@@ -169,7 +173,6 @@ public class GUI extends javax.swing.JFrame {
             model.addRow(rowData);
             count++;
         }
-        System.out.println("Deneme" + count);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -186,6 +189,7 @@ public class GUI extends javax.swing.JFrame {
         table_rooms = new javax.swing.JTable();
         btn_addRoom = new javax.swing.JButton();
         btn_deleteRoom = new javax.swing.JButton();
+        btn_emptyRooms = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         table_elders = new javax.swing.JTable();
@@ -200,6 +204,8 @@ public class GUI extends javax.swing.JFrame {
         btn_addElder = new javax.swing.JButton();
         btn_deleteElder = new javax.swing.JButton();
         btn_updateElder = new javax.swing.JButton();
+        label_elder_age = new javax.swing.JLabel();
+        slider_elder_age = new javax.swing.JSlider();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         table_visitors = new javax.swing.JTable();
@@ -210,6 +216,8 @@ public class GUI extends javax.swing.JFrame {
         btn_addVisitor = new javax.swing.JButton();
         btn_deleteVisitor = new javax.swing.JButton();
         btn_updateVisitor = new javax.swing.JButton();
+        slider_visit_count = new javax.swing.JSlider();
+        label_visitor_visit_count = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         table_visits = new javax.swing.JTable();
@@ -287,6 +295,13 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        btn_emptyRooms.setText("Boş Odaları Getir / Hepsini Göster");
+        btn_emptyRooms.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_emptyRoomsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -297,6 +312,8 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btn_addRoom)
+                        .addGap(199, 199, 199)
+                        .addComponent(btn_emptyRooms)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_deleteRoom)))
                 .addContainerGap())
@@ -309,8 +326,9 @@ public class GUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_addRoom)
-                    .addComponent(btn_deleteRoom))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_deleteRoom)
+                    .addComponent(btn_emptyRooms))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Rooms", jPanel1);
@@ -370,6 +388,17 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        label_elder_age.setForeground(new java.awt.Color(255, 0, 0));
+        label_elder_age.setText("50");
+
+        slider_elder_age.setPaintLabels(true);
+        slider_elder_age.setPaintTicks(true);
+        slider_elder_age.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                slider_elder_ageStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -392,6 +421,12 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(txt_surname, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                             .addComponent(cb_gender, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(slider_elder_age, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(label_elder_age)))
+                        .addGap(55, 55, 55)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btn_deleteElder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_updateElder, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
@@ -406,30 +441,36 @@ public class GUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_surname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_birthday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cb_gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(btn_addElder))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_deleteElder)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_updateElder)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btn_updateElder))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addComponent(slider_elder_age, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(label_elder_age)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txt_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_surname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_birthday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(cb_gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Elders", jPanel2);
@@ -477,6 +518,18 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        slider_visit_count.setPaintLabels(true);
+        slider_visit_count.setPaintTicks(true);
+        slider_visit_count.setValue(0);
+        slider_visit_count.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                slider_visit_countStateChanged(evt);
+            }
+        });
+
+        label_visitor_visit_count.setForeground(new java.awt.Color(255, 0, 0));
+        label_visitor_visit_count.setText("0");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -493,7 +546,14 @@ public class GUI extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6)
                             .addComponent(txt_surnameVisitor, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(slider_visit_count, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(48, 48, 48)
+                                .addComponent(label_visitor_visit_count)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btn_deleteVisitor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btn_updateVisitor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -508,19 +568,22 @@ public class GUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_nameVisitor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_surnameVisitor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(btn_addVisitor))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_deleteVisitor)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_updateVisitor)))
+                        .addComponent(btn_updateVisitor))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(slider_visit_count, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txt_nameVisitor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txt_surnameVisitor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(label_visitor_visit_count))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -586,7 +649,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(txt_searchElder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Visits", jPanel4);
@@ -827,7 +890,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(txt_visit_count, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Filter by Visits", jPanel6);
@@ -840,7 +903,9 @@ public class GUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 445, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -854,7 +919,7 @@ public class GUI extends javax.swing.JFrame {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            roomsToTable();
+            roomsToTable(empty);
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -876,7 +941,7 @@ public class GUI extends javax.swing.JFrame {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            roomsToTable();
+            roomsToTable(empty);
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -899,7 +964,7 @@ public class GUI extends javax.swing.JFrame {
         String gender = String.valueOf(cb_gender.getSelectedItem());
         try {
             db.insert_elder(first_name, last_name, date_of_birthday, gender);
-            eldersToTable();
+            eldersToTable(elder_age);
             clearTexts();
             JOptionPane.showMessageDialog(null, "Elder Added.");
             JOptionPane.showMessageDialog(null, "Trigger Activated! Automaticly assigned a room");
@@ -920,7 +985,7 @@ public class GUI extends javax.swing.JFrame {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            eldersToTable();
+            eldersToTable(elder_age);
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -939,7 +1004,7 @@ public class GUI extends javax.swing.JFrame {
         String gender = String.valueOf(cb_gender.getSelectedItem());
         try {
             db.update_elder(id,first_name, last_name, date_of_birthday, gender);
-            eldersToTable();
+            eldersToTable(elder_age);
             clearTexts();
             JOptionPane.showMessageDialog(null, "Elder updated.");
         } catch (SQLException ex) {
@@ -947,7 +1012,7 @@ public class GUI extends javax.swing.JFrame {
         }
         
         try {
-            eldersToTable();
+            eldersToTable(elder_age);
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -973,7 +1038,7 @@ public class GUI extends javax.swing.JFrame {
         
         try {
             db.insert_visitor(first_name, last_name);
-            eldersToTable();
+            eldersToTable(elder_age);
             clearTexts();
             JOptionPane.showMessageDialog(null, "Visitor Added");
         } catch (SQLException ex) {
@@ -992,7 +1057,7 @@ public class GUI extends javax.swing.JFrame {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            visitorsToTable();
+            visitorsToTable(visit_count);
         } catch (SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1008,7 +1073,7 @@ public class GUI extends javax.swing.JFrame {
        
         try {
             db.update_visitor(id,first_name, last_name);
-            visitorsToTable();
+            visitorsToTable(visit_count);
             clearTexts();
             JOptionPane.showMessageDialog(null, "Visitor Updated");
         } catch (SQLException ex) {
@@ -1093,7 +1158,7 @@ public class GUI extends javax.swing.JFrame {
     private void btn_newVisitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_newVisitActionPerformed
         try {
             db.insert_visit(selectedElderID, selectedVisitor1ID, selectedVisitor2ID);
-            eldersToTable2();
+            eldersToTable2(0);
             visitorsToTable2();
             JOptionPane.showMessageDialog(null, "New Visit Created.");
             JOptionPane.showMessageDialog(null, "Trigger Activated. Visit counts updated!");
@@ -1111,6 +1176,38 @@ public class GUI extends javax.swing.JFrame {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btn_emptyRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_emptyRoomsActionPerformed
+        try {
+            empty++;
+            if(empty == 2){
+                empty = 0;
+            }
+            roomsToTable(empty);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btn_emptyRoomsActionPerformed
+
+    private void slider_visit_countStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slider_visit_countStateChanged
+        visit_count = slider_visit_count.getValue();
+        label_visitor_visit_count.setText(valueOf(visit_count));
+        try {
+            visitorsToTable(visit_count);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_slider_visit_countStateChanged
+
+    private void slider_elder_ageStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slider_elder_ageStateChanged
+        elder_age = slider_elder_age.getValue();
+        label_elder_age.setText(valueOf(elder_age));
+        try {
+            eldersToTable(elder_age);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_slider_elder_ageStateChanged
 
     
     /**
@@ -1159,6 +1256,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_deleteElder;
     private javax.swing.JButton btn_deleteRoom;
     private javax.swing.JButton btn_deleteVisitor;
+    private javax.swing.JButton btn_emptyRooms;
     private javax.swing.JButton btn_newVisit;
     private javax.swing.JButton btn_updateElder;
     private javax.swing.JButton btn_updateVisitor;
@@ -1193,9 +1291,13 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JLabel label_elder_age;
+    private javax.swing.JLabel label_visitor_visit_count;
     private javax.swing.JLabel selected_elder_label;
     private javax.swing.JLabel selected_visitor_label1;
     private javax.swing.JLabel selected_visitor_label2;
+    private javax.swing.JSlider slider_elder_age;
+    private javax.swing.JSlider slider_visit_count;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable table_elders;
     private javax.swing.JTable table_filter_visit;

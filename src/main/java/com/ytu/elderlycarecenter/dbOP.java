@@ -50,23 +50,27 @@ public class dbOP {
         }
     }
 
-    public ArrayList<Room> get_rooms() throws SQLException {
+    public ArrayList<Room> get_rooms(int value) throws SQLException {
         ArrayList<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM room ORDER BY id";
+        String query = "SELECT get_rooms("+value+")";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
-            int id= rs.getInt("id");
-            int room_number = rs.getInt("room_number");
+            String result = rs.getString(1);
+            result = result.replace("(","") ;
+            result = result.replace(")", "");
+            String[] tokens = result.split(",");
+            int id= Integer.parseInt(tokens[0]);
+            int room_number = Integer.parseInt(tokens[1]);
             Room tmp = new Room(id,room_number);
             rooms.add(tmp);
         }
         return rooms;
     }
 
-    public ArrayList<Elder> get_elders() throws SQLException {
+    public ArrayList<Elder> get_elders(int value) throws SQLException {
         ArrayList<Elder> elders = new ArrayList<>();
-        String query = "SELECT * FROM elder_view ORDER BY id";
+        String query = "SELECT * FROM get_elders_by_age("+value+")";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
@@ -85,16 +89,20 @@ public class dbOP {
         return elders;
     }
 
-    public ArrayList<Visitor> get_visitors() throws SQLException {
+    public ArrayList<Visitor> get_visitors(int value) throws SQLException {
         ArrayList<Visitor> visitors = new ArrayList<>();
-        String query = "SELECT * FROM visitor ORDER BY id";
+        String query = "SELECT get_visitors("+value+")";
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
-            int id= rs.getInt("id");
-            String first_name = rs.getString("first_name");
-            String last_name = rs.getString("last_name");
-            int visit_count = rs.getInt("visit_count");
+            String result = rs.getString(1);
+            result = result.replace("(","") ;
+            result = result.replace(")", "");
+            String[] tokens = result.split(",");
+            int id= Integer.parseInt(tokens[0]);
+            String first_name = tokens[1];
+            String last_name = tokens[2];
+            int visit_count = Integer.parseInt(tokens[3]);
             Visitor tmp = new Visitor(id,first_name,last_name,visit_count);
             visitors.add(tmp);
         }
