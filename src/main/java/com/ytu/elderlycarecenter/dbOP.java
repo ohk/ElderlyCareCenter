@@ -213,5 +213,22 @@ public class dbOP {
         delete.setInt(1, id);
         return delete.executeUpdate();
     }
+    
+    public ArrayList<Filter> filter_visit(int count) throws SQLException {
+        ArrayList<Filter> visits = new ArrayList<>();
+        String query = "SELECT elder_first_name AS NAME,elder_last_name AS SURNAME,COUNT(elder_id) FROM visit_view GROUP BY elder_first_name,elder_last_name HAVING COUNT(elder_id)>="+count+" UNION SELECT visitor1_first_name AS NAME,visitor1_last_name AS SURNAME,COUNT(visitor1_id) FROM visit_view GROUP BY visitor1_first_name,visitor1_last_name HAVING COUNT(visitor1_id)>="+count+" UNION SELECT visitor2_first_name as NAME,visitor2_last_name as SURNAME,COUNT(visitor2_id) FROM visit_view GROUP BY visitor2_first_name,visitor2_last_name HAVING COUNT(visitor2_id)>="+count;
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            String name = rs.getString("name");
+            String surname = rs.getString("surname");
+            int visit_count = rs.getInt("count");
+           
+
+            Filter tmp = new Filter(name,surname,visit_count);
+            visits.add(tmp);
+        }
+        return visits;
+    }
 }
 

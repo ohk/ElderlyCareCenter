@@ -39,3 +39,10 @@ UPDATE elder SET first_name=?, last_name=?, date_of_birth=?, gender=? WHERE id=?
 
 -- Delete Elder
 DELETE FROM elder WHERE id=?
+
+-- Filter Visits by COUNT // AGGREGATE HAVING // UNION
+SELECT elder_first_name AS NAME,elder_last_name AS SURNAME,COUNT(elder_id) FROM visit_view GROUP BY elder_first_name,elder_last_name HAVING COUNT(elder_id)>=? 
+UNION 
+SELECT visitor1_first_name AS NAME,visitor1_last_name AS SURNAME,COUNT(visitor1_id) FROM visit_view GROUP BY visitor1_first_name,visitor1_last_name HAVING COUNT(visitor1_id)>=?
+UNION 
+SELECT visitor2_first_name as NAME,visitor2_last_name as SURNAME,COUNT(visitor2_id) FROM visit_view GROUP BY visitor2_first_name,visitor2_last_name HAVING COUNT(visitor2_id)>=?
